@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 public class Student {
 
-    private Integer id;
+    private int id;
 
     private String name;
 
@@ -46,4 +46,5 @@ public class Student {
                 ", rollNo='" + rollNo + '\'' +
                 '}';
     }
+
 }

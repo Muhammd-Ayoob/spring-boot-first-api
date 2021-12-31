@@ -1,29 +1,83 @@
 package com.api.student.studentrestapi.controllers;
 
 import com.api.student.studentrestapi.model.Student;
+import com.api.student.studentrestapi.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 
 @RestController
-
 public class StudentController {
 
+    /**
+     * Getting object of Student bean from Spring IOC
+     */
     @Autowired
     Student student;
 
-    @GetMapping("/student")
+    /**
+     * Getting object of StudentService bean from Spring IOC
+     */
+    @Autowired
+    StudentService studentService;
 
-
-    @Bean
-    public Student getString()
+    /**
+     * Get All students handler
+     *
+     */
+    @GetMapping("/students")
+    public List<Student> getAll()
     {
-        student.setId(1);
-        student.setName("Ayaz");
-        student.setRollNo("18CS85");
-
-        return student;
+        return this.studentService.getAll();
     }
+
+
+    /**
+     *
+     * Get student by id handler
+     */
+    @GetMapping("/students/{id}")
+    public Student getStudent(@PathVariable("id") int id)
+    {
+        return this.studentService.getStudentById(id);
+    }
+
+
+    /**
+     *
+     * Create student handler
+     */
+    @PostMapping("/students")
+    public void addStudent(@RequestBody Student student)
+    {
+        studentService.addStudent(student);
+    }
+
+
+    /**
+     *
+     * Delete student handler
+     */
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable("id") int id)
+    {
+     studentService.delete(id);
+    }
+
+
+    /**
+     *
+     * student update handler
+     */
+    @PutMapping("/update/{id}")
+    public void update(@RequestBody Student student, @PathVariable("id") int id )
+    {
+        studentService.update(student, id);
+    }
+
 }
+
+
+
