@@ -1,8 +1,11 @@
 package com.api.student.studentrestapi.controllers;
 
+import com.api.student.studentrestapi.dao.StudentRepository;
 import com.api.student.studentrestapi.model.Student;
 import com.api.student.studentrestapi.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -10,6 +13,8 @@ import java.util.*;
 
 @RestController
 public class StudentController {
+	
+
 
     /**
      * Getting object of Student bean from Spring IOC
@@ -28,9 +33,15 @@ public class StudentController {
      *
      */
     @GetMapping("/students")
-    public List<Student> getAll()
+    public ResponseEntity<List<Student>> getAll()
     {
-        return this.studentService.getAll();
+    	List list= studentService.getAll();
+    	if(list.size()<=0)
+    	{
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    	}
+    	
+        return ResponseEntity.of(Optional.of(list));
     }
 
 
@@ -39,9 +50,14 @@ public class StudentController {
      * Get student by id handler
      */
     @GetMapping("/students/{id}")
-    public Student getStudent(@PathVariable("id") int id)
+    public ResponseEntity<Student> getStudent(@PathVariable("id") int id)
     {
-        return this.studentService.getStudentById(id);
+        if(studentService.getStudentById(id)==null)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.of(Optional.of(studentService.getStudentById(id)));
     }
 
 
@@ -61,16 +77,25 @@ public class StudentController {
      * Delete student handler
      */
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") int id)
+    public ResponseEntity<Void> delete(@PathVariable("id") int id)
     {
-     studentService.delete(id);
+    	if(studentService.getStudentById(id)==null)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    	else
+    	{
+    		studentService.delete(id);
+    		ResponseEntity.status(HttpStatus.OK).build();
+    	}
+    	return null;
     }
 
-
-    /**
-     *
-     * student update handler
-     */
+//
+//    /**
+//     *
+//     * student update handler
+//     */
     @PutMapping("/update/{id}")
     public void update(@RequestBody Student student, @PathVariable("id") int id )
     {
